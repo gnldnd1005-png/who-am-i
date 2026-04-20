@@ -115,7 +115,7 @@ def show_card(row, reveal: bool):
     )
 
 def main():
-    for k, v in [("selected", None), ("revealed", False), ("view", "list"), ("df", None)]:
+    for k, v in [("selected", None), ("revealed", False), ("view", "list"), ("df", None), ("sheets_csv_url", None)]:
         if k not in st.session_state:
             st.session_state[k] = v
 
@@ -136,6 +136,7 @@ def main():
                 try:
                     df = load_data(csv_url)
                     st.session_state.df = df
+                    st.session_state.sheets_csv_url = csv_url
                     st.rerun()
                 except Exception as e:
                     st.error(f"불러오기 실패: {e}\n\n구글 시트가 '링크가 있는 모든 사용자' 공개로 설정되어 있는지 확인해주세요.")
@@ -156,12 +157,21 @@ def main():
 
     # ── 목록 뷰
     if st.session_state.view == "list":
-        col_title, col_reset = st.columns([3, 1])
+        col_title, col_refresh, col_reset = st.columns([3, 1, 1])
         with col_title:
             st.markdown(f"**총 {len(df)}명 참가**")
+        with col_refresh:
+            if st.button("🔄"):
+                if st.session_state.sheets_csv_url:
+                    try:
+                        st.session_state.df = load_data(st.session_state.sheets_csv_url)
+                        st.rerun()
+                    except:
+                        st.error("업데이트 실패")
         with col_reset:
-            if st.button("새로고침"):
+            if st.button("🔗"):
                 st.session_state.df = None
+                st.session_state.sheets_csv_url = None
                 st.session_state.selected = None
                 st.session_state.view = "list"
                 st.rerun()

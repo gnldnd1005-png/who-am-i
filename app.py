@@ -71,13 +71,13 @@ header {visibility: hidden;}
 """, unsafe_allow_html=True)
 
 QUESTIONS = [
-    ("mbti",  "나의 MBTI는?",                       "🧠"),
-    ("blood", "혈액형",                               "🩸"),
-    ("food",  "내가 제일 좋아하는 음식은?",           "🍽️"),
-    ("hobby", "나의 취미는?",                         "🎨"),
-    ("fav",   "내가 제일 좋아하는 것은?",             "⭐"),
-    ("fear",  "내가 무서워하거나 싫어하는 것은?",     "😱"),
-    ("note",  "기타 (조편성에 대해 하고싶은 말)",     "💬"),
+    ("mbti",     "나의 MBTI는?",                     "🧠"),
+    ("birthday", "나의 생일은?",                      "🎂"),
+    ("blood",    "혈액형",                             "🩸"),
+    ("food",     "내가 제일 좋아하는 음식은?",         "🍽️"),
+    ("hobby",    "나의 취미는?",                       "🎨"),
+    ("dislike",  "내가 싫어하는 것은?",               "😤"),
+    ("intro",    "나를 한마디로 소개한다면?",          "✨"),
 ]
 
 def sheets_url_to_csv_url(url: str) -> str | None:

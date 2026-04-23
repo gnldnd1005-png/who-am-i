@@ -1,4 +1,5 @@
 import re
+import os
 import streamlit as st
 import pandas as pd
 
@@ -89,10 +90,13 @@ def sheets_url_to_csv_url(url: str) -> str | None:
     gid = gid_match.group(1) if gid_match else "0"
     return f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv&gid={gid}"
 
-def load_data(source) -> pd.DataFrame:
-    df = pd.read_csv(source)
+DEFAULT_FILE = "survey.xlsx"
+
+
+def load_data(source, is_excel=False) -> pd.DataFrame:
+    df = pd.read_excel(source) if is_excel else pd.read_csv(source)
     first_col = df.columns[0]
-    if "타임스탬프" in first_col or "Timestamp" in first_col:
+    if "타임스탬프" in str(first_col) or "Timestamp" in str(first_col):
         df = df.drop(columns=[first_col])
     expected_keys = ["name"] + [q[0] for q in QUESTIONS]
     rename_map = {df.columns[i]: expected_keys[i] for i in range(min(len(df.columns), len(expected_keys)))}
@@ -118,6 +122,15 @@ def main():
     for k, v in [("selected", None), ("revealed", False), ("view", "list"), ("df", None), ("sheets_csv_url", None)]:
         if k not in st.session_state:
             st.session_state[k] = v
+
+    # 기본 엑셀 파일 자동 로드
+    if st.session_state.df is None and os.path.exists(DEFAULT_FILE):
+        try:
+            df = load_data(DEFAULT_FILE, is_excel=True)
+            if len(df) > 0:
+                st.session_state.df = df
+        except Exception:
+            pass
 
     st.title("🎯 Who Am I?")
 
